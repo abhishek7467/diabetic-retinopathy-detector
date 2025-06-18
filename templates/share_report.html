@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Share Report - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-share"></i> Share Analysis Report</h2>
+                <a href="{{ url_for('main.result', record_id=record.id) }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Results
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-envelope"></i> Email Report</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="shareForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="bi bi-envelope"></i> Recipient Email Address *
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="Enter email address to share the report"
+                                   required>
+                            <div class="form-text">
+                                A comprehensive PDF report will be sent to this email address.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Personal Message (Optional)</label>
+                            <textarea class="form-control" 
+                                      id="message" 
+                                      name="message" 
+                                      rows="4"
+                                      placeholder="Add a personal message to include with the report..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consent" name="consent" required>
+                                <label class="form-check-label" for="consent">
+                                    I confirm that I have the recipient's consent to share this medical report with them. *
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="public_share" name="public_share">
+                                <label class="form-check-label" for="public_share">
+                                    <i class="bi bi-globe"></i> Also create a public link for easy sharing (Optional)
+                                </label>
+                            </div>
+                            <div class="form-text">
+                                This will create a temporary public link that can be shared with healthcare providers or family members.
+                                The link will be automatically generated and included in the email.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Report Contents</h6>
+                            <p class="mb-2">The shared report will include:</p>
+                            <ul class="mb-0">
+                                <li>Patient information and test details</li>
+                                <li>AI prediction results with confidence levels</li>
+                                <li>Clinical interpretation of findings</li>
+                                <li>Medical recommendations</li>
+                                <li>QR code for online access</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-shield-exclamation"></i> Privacy Notice</h6>
+                            <p class="mb-0">
+                                Please ensure you have permission to share this medical information. 
+                                The report contains sensitive health data that should only be shared 
+                                with authorized healthcare providers or family members.
+                            </p>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('main.result', record_id=record.id) }}" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Result
+                            </a>
+                            <div>
+                                <a href="{{ url_for('main.download_report', record_id=record.id) }}" 
+                                   class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-download"></i> Download Instead
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send"></i> Send Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Social Sharing Options -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-share"></i> Quick Share Options</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">
+                        Share analysis summary (not the full report) via social platforms or messaging apps.
+                    </p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-outline-primary social-share-btn" onclick="shareWhatsApp()">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-outline-info social-share-btn" onclick="shareLinkedIn()">
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </button>
+                        <button class="btn btn-outline-success social-share-btn" onclick="shareEmail()">
+                            <i class="bi bi-envelope"></i> Email
+                        </button>
+                        <button class="btn btn-outline-secondary social-share-btn" onclick="copyReportLink()">
+                            <i class="bi bi-clipboard"></i> Copy Link
+                        </button>
+                        <button class="btn btn-outline-warning social-share-btn" onclick="createPublicLink()">
+                            <i class="bi bi-globe"></i> Create Public Link
+                        </button>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <small><i class="bi bi-exclamation-triangle"></i> 
+                        Social sharing only shares a general summary, not sensitive medical details.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Report Preview -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Report Preview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('main.uploaded_file', filename=record.filename) }}" 
+                             alt="Retinal Image" 
+                             class="img-fluid rounded"
+                             style="max-height: 150px; object-fit: cover;">
+                    </div>
+                    
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Patient:</strong></td>
+                            <td>{{ record.user.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Test Date:</strong></td>
+                            <td>{{ record.created_at.strftime('%B %d, %Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Result:</strong></td>
+                            <td>
+                                <span class="badge {% if record.prediction_class == 'No_DR' %}bg-success{% elif record.prediction_class in ['Mild', 'Moderate'] %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ record.prediction_class }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Confidence:</strong></td>
+                            <td>{{ "%.1f"|format(record.confidence * 100) if record.confidence else 'N/A' }}%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Image:</strong></td>
+                            <td>{{ record.original_filename }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Alternative Sharing Options -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-share-fill"></i> Other Options</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('main.download_report', record_id=record.id) }}" 
+                           class="btn btn-outline-success">
+                            <i class="bi bi-download"></i> Download PDF Report
+                        </a>
+                        
+                        <button class="btn btn-outline-info" onclick="copyReportLink()">
+                            <i class="bi bi-link-45deg"></i> Copy Report Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="card mt-4">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0"><i class="bi bi-shield-exclamation"></i> Security Reminder</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="small mb-0">
+                        <li>Only share with authorized healthcare providers</li>
+                        <li>Ensure secure email transmission</li>
+                        <li>Verify recipient identity before sharing</li>
+                        <li>Consider using encrypted communication</li>
+                        <li>Follow your organization's privacy policies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('shareForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', function(e) {
+        // Basic validation
+        const email = document.getElementById('email').value.trim();
+        const consent = document.getElementById('consent').checked;
+        
+        if (!email || !consent) {
+            e.preventDefault();
+            alert('Please fill in all required fields and provide consent.');
+            return false;
+        }
+        
+        if (!isValidEmail(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address.');
+            return false;
+        }
+        
+        // Show loading state
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
+        submitBtn.disabled = true;
+    });
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+});
+
+function copyReportLink() {
+    const reportUrl = `${window.location.origin}/result/{{ record.id }}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(reportUrl).then(function() {
+            showToast('Report link copied to clipboard!', 'success');
+        });
+    } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = reportUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast('Report link copied to clipboard!', 'success');
+    }
+}
+
+function shareWhatsApp() {
+    const message = `I'm sharing my diabetic retinopathy analysis report. View it here: ${window.location.origin}/result/{{ record.id }}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function shareLinkedIn() {
+    const message = `Check out my diabetic retinopathy analysis report`;
+    const url = `${window.location.origin}/result/{{ record.id }}`;
+    const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(linkedinUrl, '_blank');
+}
+
+function shareEmail() {
+    const subject = 'Diabetic Retinopathy Analysis Report';
+    const body = `I'm sharing my diabetic retinopathy analysis report with you. You can view it here: ${window.location.origin}/result/{{ record.id }}`;
+    const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = emailUrl;
+}
+
+function createPublicLink() {
+    // Check for consent
+    if (!confirm('Do you consent to creating a public link for this medical report? This will temporarily share your medical information on a public platform.')) {
+        return;
+    }
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating...';
+    btn.disabled = true;
+    
+    fetch(`/create-public-link/{{ record.id }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            consent: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(`Public link created successfully! <br><a href="${data.url}" target="_blank">${data.url}</a>`, 'success');
+            
+            // Copy to clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(data.url);
+                showToast('Link copied to clipboard!', 'info');
+            }
+        } else {
+            showToast(data.error || 'Failed to create public link', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while creating the public link', 'danger');
+    })
+    .finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+function showToast(message, type = 'info') {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} position-fixed alert-dismissible`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 8000); // Longer timeout for public link messages
+}
+</script>
+{% endblock %}

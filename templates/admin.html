@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-cog me-2"></i>Admin Panel</h2>
+                <div class="badge bg-primary">Admin Access</div>
+            </div>
+
+            <!-- System Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Total Users</h5>
+                                    <h3 class="mb-0" id="totalUsers">{{ stats.total_users }}</h3>
+                                </div>
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Total Analyses</h5>
+                                    <h3 class="mb-0" id="totalAnalyses">{{ stats.total_analyses }}</h3>
+                                </div>
+                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">DR Cases Detected</h5>
+                                    <h3 class="mb-0" id="drCases">{{ stats.dr_cases }}</h3>
+                                </div>
+                                <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">This Month</h5>
+                                    <h3 class="mb-0" id="monthlyAnalyses">{{ stats.recent_analyses or 0 }}</h3>
+                                </div>
+                                <i class="fas fa-calendar fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Information Panel -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-server me-2"></i>System Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-primary mb-3" onclick="refreshSystemInfo()">
+                                <i class="fas fa-sync-alt me-1"></i>Refresh
+                            </button>
+                            <div id="systemInfo">
+                                <div class="row">
+                                    <div class="col-6"><strong>Database Status:</strong></div>
+                                    <div class="col-6"><span class="badge bg-success">Connected</span></div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6"><strong>Server Status:</strong></div>
+                                    <div class="col-6"><span class="badge bg-success">Running</span></div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6"><strong>Last Updated:</strong></div>
+                                    <div class="col-6">{{ moment().format('YYYY-MM-DD HH:mm:ss') if moment else 'Just now' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="exportAllData()">
+                                    <i class="fas fa-download me-1"></i>Export All Data
+                                </button>
+                                <button class="btn btn-outline-info" onclick="viewSystemLogs()">
+                                    <i class="fas fa-file-alt me-1"></i>View System Logs
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="backupDatabase()">
+                                    <i class="fas fa-database me-1"></i>Backup Database
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management -->
+            {% if users %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>User Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Registration Date</th>
+                                    <th>Total Analyses</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                                    <td>{{ user.image_records|length if user.image_records else 0 }}</td>
+                                    <td>
+                                        {% if user.is_admin %}
+                                            <span class="badge bg-danger">Admin</span>
+                                        {% else %}
+                                            <span class="badge bg-success">User</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" onclick="viewUserDetails('{{ user.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            {% if not user.is_admin or user.id != current_user.id %}
+                                            <button class="btn btn-outline-warning" onclick="toggleAdminStatus('{{ user.id }}', {{ user.is_admin|lower }})">
+                                                <i class="fas fa-user-shield"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Admin Functions
+function refreshSystemInfo() {
+    const systemInfoDiv = document.getElementById('systemInfo');
+    systemInfoDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>';
+    
+    fetch('/api/system-info')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                systemInfoDiv.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+                return;
+            }
+            
+            // Update the statistics
+            document.getElementById('totalUsers').textContent = data.total_users;
+            document.getElementById('totalAnalyses').textContent = data.total_analyses;
+            document.getElementById('monthlyAnalyses').textContent = data.recent_analyses;
+            
+            // Update system info
+            systemInfoDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-6"><strong>Database Status:</strong></div>
+                    <div class="col-6"><span class="badge bg-success">Connected</span></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6"><strong>Total Users:</strong></div>
+                    <div class="col-6">${data.total_users}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6"><strong>Total Analyses:</strong></div>
+                    <div class="col-6">${data.total_analyses}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6"><strong>Last Updated:</strong></div>
+                    <div class="col-6">${new Date().toLocaleString()}</div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            systemInfoDiv.innerHTML = '<div class="alert alert-danger">Error loading system information</div>';
+        });
+}
+
+function viewUserDetails(userId) {
+    // Implement user details view
+    console.log('View user details:', userId);
+    alert('User details functionality - to be implemented');
+}
+
+function toggleAdminStatus(userId, isCurrentlyAdmin) {
+    const action = isCurrentlyAdmin ? 'remove admin' : 'grant admin';
+    if (confirm('Are you sure you want to ' + action + ' privileges for this user?')) {
+        // This would make an API call to toggle admin status
+        alert('Admin toggle functionality - to be implemented');
+        console.log('Toggle admin for user:', userId);
+    }
+}
+
+function exportAllData() {
+    alert('Export all data functionality - to be implemented');
+}
+
+function viewSystemLogs() {
+    alert('System logs functionality - to be implemented');
+}
+
+function backupDatabase() {
+    alert('Database backup functionality - to be implemented');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh system info every 30 seconds
+    setInterval(refreshSystemInfo, 30000);
+});
+</script>
+{% endblock %}

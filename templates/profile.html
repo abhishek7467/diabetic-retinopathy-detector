@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2">Your Profile</h2>
+                    <p class="text-muted">Manage your account information</p>
+                </div>
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ current_user.name }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                   value="{{ current_user.email }}" readonly>
+                        </div>
+                        <div class="form-text">Email address cannot be changed.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number"
+                                   value="{{ current_user.phone_number or '' }}" 
+                                   placeholder="Enter your phone number (with country code)">
+                        </div>
+                        <div class="form-text">Include country code (e.g. +1 for USA)</div>
+                    </div>
+
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3">Change Password</h5>
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input type="password" class="form-control" id="current_password" name="current_password"
+                                   placeholder="Enter current password">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="new_password" name="new_password"
+                                   placeholder="Enter new password">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                   placeholder="Confirm new password">
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

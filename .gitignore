@@ -1,0 +1,10 @@
+__pycache__/
+
+# Prevent pushing compiled Python files and secrets
+__pycache__/
+*.pyc
+.env
+*.env
+credentials.json
+*.sqlite3
+

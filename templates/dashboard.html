@@ -1,0 +1,675 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>Welcome back, {{ current_user.name }}!</h2>
+                <p class="text-muted mb-0">Ready to analyze some retinal images?</p>
+            </div>
+            <div>
+                <a href="{{ url_for('main.upload_page') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-cloud-upload"></i> Upload New Image
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-2 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Total Images</h5>
+                        <h3 class="mb-0" id="total-images-count">{{ total_images }}</h3>
+                    </div>
+                    <i class="bi bi-images" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">No DR</h5>
+                        <h3 class="mb-0" id="no-dr-count">{{ no_dr_count }}</h3>
+                    </div>
+                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Mild</h5>
+                        <h3 class="mb-0" id="mild-dr-count">{{ mild_dr_count }}</h3>
+                    </div>
+                    <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Moderate</h5>
+                        <h3 class="mb-0" id="moderate-dr-count">{{ moderate_dr_count }}</h3>
+                    </div>
+                    <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Severe</h5>
+                        <h3 class="mb-0" id="severe-dr-count">{{ severe_dr_count }}</h3>
+                    </div>
+                    <i class="bi bi-exclamation-circle" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card bg-dark text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Proliferate</h5>
+                        <h3 class="mb-0" id="proliferate-dr-count">{{ proliferate_dr_count }}</h3>
+                    </div>
+                    <i class="bi bi-x-circle" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity and Quick Navigation -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Activity</h5>
+                <small class="text-muted" id="last-updated">Last updated: <span id="update-timestamp">{{ current_time.strftime('%B %d, %Y at %I:%M %p') if current_time else 'Just now' }}</span></small>
+            </div>
+            <div class="card-body">
+                {% if recent_images %}
+                <!-- All images with pagination -->
+                <div class="row g-3" id="images-container">
+                    {% for image in recent_images %}
+                    <div class="col-md-6 image-item" data-page="{{ ((loop.index0 // 4) + 1) }}">
+                        <div class="d-flex align-items-center p-3 border rounded shadow-sm hover-card">
+                            <img src="{{ url_for('main.uploaded_file', filename=image.filename) }}" 
+                                 alt="Recent scan" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #f8f9fa;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold">{{ image.filename[:25] }}{% if image.filename|length > 25 %}...{% endif %}</h6>
+                                <p class="mb-2 small">
+                                    <span class="badge fs-6 {% if image.prediction_class in ['No DR', 'No_DR'] %}bg-success{% elif image.prediction_class in ['Mild DR', 'Mild_DR'] %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ image.prediction_class or 'Processing...' }}
+                                    </span>
+                                    {% if image.confidence %}
+                                    <span class="badge bg-secondary ms-1">{{ "%.1f"|format(image.confidence * 100) }}%</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0 text-muted small">
+                                    <i class="bi bi-calendar3"></i> {{ image.created_at.strftime('%B %d, %Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if recent_images|length > 4 %}
+                <!-- Pagination Controls -->
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Showing <span id="current-range">1-4</span> of {{ recent_images|length }} images
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="btn btn-sm btn-outline-primary me-2" id="prev-page" disabled>
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </button>
+                            <span class="mx-2">
+                                Page <span id="current-page">1</span> of <span id="total-pages">{{ ((recent_images|length - 1) // 4) + 1 }}</span>
+                            </span>
+                            <button class="btn btn-sm btn-outline-primary ms-2" id="next-page" {% if recent_images|length <= 4 %}disabled{% endif %}>
+                                Next <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-camera text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2">No recent activity. Upload your first retinal image to get started!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Advanced Dashboards</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('main.patient_trends') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-graph-up"></i> Patient Trends
+                    </a>
+                    <a href="{{ url_for('main.my_analytics') }}" class="btn btn-outline-info">
+                        <i class="bi bi-bar-chart"></i> My Analytics
+                    </a>
+                    {% if current_user.is_admin %}
+                    <a href="{{ url_for('main.global_stats') }}" class="btn btn-outline-warning">
+                        <i class="bi bi-globe"></i> Global Statistics
+                    </a>
+                    <a href="{{ url_for('main.model_performance') }}" class="btn btn-outline-danger">
+                        <i class="bi bi-cpu"></i> Model Performance
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center py-4">
+                <h5>Quick Actions</h5>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ url_for('main.upload_page') }}" class="btn btn-primary">
+                        <i class="bi bi-cloud-upload"></i> Upload Image
+                    </a>
+                    <a href="{{ url_for('main.history') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-clock-history"></i> View History
+                    </a>
+                    {% if current_user.is_admin %}
+                    <a href="{{ url_for('main.admin') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-shield-check"></i> Admin Panel
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading indicator -->
+<div id="loading-indicator" class="text-center py-2" style="display: none;">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <span class="ms-2 text-muted">Updating dashboard...</span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dashboard live data update functionality
+class DashboardUpdater {
+    constructor() {
+        this.updateInterval = 30000; // 30 seconds
+        this.intervalId = null;
+        this.init();
+    }
+    
+    init() {
+        this.startAutoUpdate();
+        this.setupEventListeners();
+    }
+    
+    startAutoUpdate() {
+        // Initial update
+        this.updateDashboardStats();
+        
+        // Set up periodic updates
+        this.intervalId = setInterval(() => {
+            this.updateDashboardStats();
+        }, this.updateInterval);
+    }
+    
+    stopAutoUpdate() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+    
+    setupEventListeners() {
+        // Stop updates when page is not visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.stopAutoUpdate();
+            } else {
+                this.startAutoUpdate();
+            }
+        });
+        
+        // Manual refresh button (if exists)
+        const refreshBtn = document.getElementById('refresh-dashboard');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.updateDashboardStats(true);
+            });
+        }
+    }
+    
+    async updateDashboardStats(showLoading = false) {
+        try {
+            if (showLoading) {
+                this.showLoading();
+            }
+            
+            const response = await fetch('/api/dashboard-stats');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            this.updateStatsDisplay(data);
+            this.updateTimestamp();
+            
+            if (showLoading) {
+                this.hideLoading();
+            }
+            
+        } catch (error) {
+            console.error('Error updating dashboard stats:', error);
+            if (showLoading) {
+                this.hideLoading();
+            }
+        }
+    }
+    
+    updateStatsDisplay(data) {
+        // Update stat cards
+        const totalImagesEl = document.getElementById('total-images-count');
+        const noDrCountEl = document.getElementById('no-dr-count');
+        const mildDrCountEl = document.getElementById('mild-dr-count');
+        const moderateDrCountEl = document.getElementById('moderate-dr-count');
+        
+        if (totalImagesEl) totalImagesEl.textContent = data.total_images || 0;
+        if (noDrCountEl) noDrCountEl.textContent = data.no_dr_count || 0;
+        if (mildDrCountEl) mildDrCountEl.textContent = data.mild_dr_count || 0;
+        if (moderateDrCountEl) moderateDrCountEl.textContent = data.moderate_dr_count || 0;
+        
+        // Add subtle animation to indicate update
+        [totalImagesEl, noDrCountEl, mildDrCountEl, moderateDrCountEl].forEach(el => {
+            if (el) {
+                el.classList.add('text-animation');
+                setTimeout(() => el.classList.remove('text-animation'), 1000);
+            }
+        });
+    }
+    
+    updateTimestamp() {
+        const timestampEl = document.getElementById('update-timestamp');
+        if (timestampEl) {
+            const now = new Date();
+            timestampEl.textContent = now.toLocaleString();
+        }
+    }
+    
+    showLoading() {
+        const loadingEl = document.getElementById('loading-indicator');
+        if (loadingEl) {
+            loadingEl.style.display = 'block';
+        }
+    }
+    
+    hideLoading() {
+        const loadingEl = document.getElementById('loading-indicator');
+        if (loadingEl) {
+            loadingEl.style.display = 'none';
+        }
+    }
+}
+
+// Dashboard Pagination System
+class DashboardPagination {
+    constructor() {
+        this.currentPage = 1;
+        this.itemsPerPage = 4;
+        this.totalItems = document.querySelectorAll('.image-item').length;
+        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+        console.log(`Pagination initialized: ${this.totalItems} items, ${this.totalPages} pages, ${this.itemsPerPage} per page`);
+        this.init();
+    }
+    
+    init() {
+        // Hide all images initially except first 4
+        this.hideAllImages();
+        this.updateDisplay();
+        this.setupEventListeners();
+    }
+    
+    hideAllImages() {
+        const items = document.querySelectorAll('.image-item');
+        items.forEach((item, index) => {
+            if (index >= this.itemsPerPage) {
+                item.classList.add('d-none');
+                item.classList.remove('d-block');
+            } else {
+                item.classList.remove('d-none');
+                item.classList.add('d-block');
+            }
+        });
+    }
+    
+    setupEventListeners() {
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.previousPage());
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.nextPage());
+        }
+    }
+    
+    updateDisplay() {
+        const items = document.querySelectorAll('.image-item');
+        console.log(`Updating display: Page ${this.currentPage}, Total items: ${items.length}`);
+        
+        // Hide all items first using classList
+        items.forEach((item, index) => {
+            item.classList.add('d-none');
+            item.classList.remove('d-block');
+        });
+        
+        // Show items for current page
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = Math.min(startIndex + this.itemsPerPage, this.totalItems);
+        
+        console.log(`Showing items ${startIndex} to ${endIndex - 1}`);
+        
+        for (let i = startIndex; i < endIndex; i++) {
+            if (items[i]) {
+                items[i].classList.remove('d-none');
+                items[i].classList.add('d-block');
+            }
+        }
+        
+        // Update pagination info
+        this.updatePaginationInfo(startIndex + 1, endIndex);
+        this.updateButtonStates();
+    }
+    
+    updatePaginationInfo(start, end) {
+        const currentRange = document.getElementById('current-range');
+        const currentPageSpan = document.getElementById('current-page');
+        const totalPagesSpan = document.getElementById('total-pages');
+        
+        if (currentRange) {
+            currentRange.textContent = `${start}-${end}`;
+        }
+        
+        if (currentPageSpan) {
+            currentPageSpan.textContent = this.currentPage;
+        }
+        
+        if (totalPagesSpan) {
+            totalPagesSpan.textContent = this.totalPages;
+        }
+    }
+    
+    updateButtonStates() {
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        
+        if (prevBtn) {
+            prevBtn.disabled = this.currentPage === 1;
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = this.currentPage === this.totalPages;
+        }
+    }
+    
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.updateDisplay();
+        }
+    }
+    
+    previousPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.updateDisplay();
+        }
+    }
+}
+
+// Function to toggle additional images - Keep for compatibility but not used
+function toggleAdditionalImages() {
+    console.log('toggleAdditionalImages called - using pagination instead');
+}
+
+// Initialize dashboard updater and pagination when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const dashboardUpdater = new DashboardUpdater();
+    
+    // Make it globally accessible for debugging
+    window.dashboardUpdater = dashboardUpdater;
+    
+    // Initialize pagination system
+    const imageItems = document.querySelectorAll('.image-item');
+    if (imageItems.length > 0) {
+        const pagination = new DashboardPagination();
+        window.dashboardPagination = pagination;
+    }
+    
+    // Keep old toggle button functionality for backward compatibility
+    const toggleButton = document.getElementById('toggle-additional');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', toggleAdditionalImages);
+    }
+});
+</script>
+
+<style>
+/* Pagination controls styling */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-controls button {
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Images container for proper grid layout */
+#images-container {
+    min-height: 200px; /* Maintain consistent height */
+}
+
+/* Image item animations */
+.image-item {
+    transition: opacity 0.3s ease;
+}
+
+.image-item.d-none {
+    opacity: 0;
+}
+
+.image-item.d-block {
+    opacity: 1;
+}
+
+/* Animation for updated stats */
+.text-animation {
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Improved card hover effects */
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Enhanced hover effect for main image cards */
+.hover-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    border-color: #007bff !important;
+}
+
+/* Small cards styling */
+.small-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.small-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Scrollable container styling */
+.scrollable-cards {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.scrollable-cards::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-cards::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.scrollable-cards::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.scrollable-cards::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Additional images container */
+#additional-images {
+    transition: all 0.3s ease-in-out;
+}
+
+#additional-images[style*="block"] {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Badge improvements */
+.badge.fs-6 {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Loading indicator styling */
+#loading-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+/* Toggle button styling */
+#toggle-additional {
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+#toggle-additional:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .hover-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hover-card img {
+        margin-bottom: 1rem;
+        margin-right: 0 !important;
+    }
+    
+    .scrollable-cards {
+        max-height: 250px !important;
+    }
+}
+</style>
+{% endblock %}

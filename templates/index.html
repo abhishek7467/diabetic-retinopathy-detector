@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-lg-8 mx-auto text-center">
+        <h1 class="display-4 text-primary mb-4">
+            <i class="bi bi-eye-fill"></i> Diabetic Retinopathy Detection
+        </h1>
+        <p class="lead mb-4">
+            Advanced AI-powered system to detect and classify diabetic retinopathy from retinal images.
+            Early detection can help prevent vision loss and improve patient outcomes.
+        </p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.upload_page') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="bi bi-cloud-upload"></i> Upload Image
+                </a>
+                <a href="{{ url_for('main.history') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="bi bi-clock-history"></i> View History
+                </a>
+            {% else %}
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="bi bi-person-plus"></i> Get Started
+                </a>
+                <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Key Features</h2>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-cpu text-primary" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">AI-Powered Detection</h5>
+                <p class="card-text">
+                    Advanced YOLOv8 model trained to detect and classify diabetic retinopathy with high accuracy.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-lightning-charge text-warning" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Fast Results</h5>
+                <p class="card-text">
+                    Get instant analysis results with confidence scores and detailed classification.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Secure & Private</h5>
+                <p class="card-text">
+                    Your medical images are processed securely with complete privacy protection.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">How It Works</h2>
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <span class="fs-4 fw-bold">1</span>
+                </div>
+                <h5>Upload Image</h5>
+                <p>Upload a clear retinal fundus image (JPG, PNG format)</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <span class="fs-4 fw-bold">2</span>
+                </div>
+                <h5>AI Analysis</h5>
+                <p>Our trained YOLOv8 model analyzes the image for signs of diabetic retinopathy</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <span class="fs-4 fw-bold">3</span>
+                </div>
+                <h5>Get Results</h5>
+                <p>Receive detailed classification results with confidence scores</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not current_user.is_authenticated %}
+<!-- Call to Action -->
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-light">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-3">Ready to Get Started?</h3>
+                <p class="mb-4">Create your account and start analyzing retinal images for diabetic retinopathy detection.</p>
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-person-plus"></i> Sign Up Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

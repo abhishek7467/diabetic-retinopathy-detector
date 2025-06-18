@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="bi bi-question-circle"></i> Frequently Asked Questions</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Search Box -->
+            <div class="mb-4">
+                <input type="text" id="faqSearch" class="form-control faq-search" placeholder="Search FAQs...">
+            </div>
+            
+            <div class="accordion" id="faqAccordion">
+                <!-- General Questions -->
+                <div class="card">
+                    <div class="card-header" id="heading1">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                What is diabetic retinopathy and why should I be concerned?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse1" class="collapse show" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Diabetic retinopathy is a diabetes complication that affects the eyes. It occurs when high blood sugar levels damage the blood vessels in the retina (the light-sensitive tissue at the back of the eye).</p>
+                            <p><strong>Why it matters:</strong></p>
+                            <ul>
+                                <li>It's the leading cause of blindness in working-age adults</li>
+                                <li>Early stages often have no symptoms</li>
+                                <li>Early detection and treatment can prevent vision loss</li>
+                                <li>Regular screening is crucial for people with diabetes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading2">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                How accurate is this AI detection system?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse2" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Our AI system uses advanced deep learning algorithms trained on thousands of retinal images. While it provides highly accurate screening results, it's important to understand:</p>
+                            <ul>
+                                <li><strong>Screening Tool:</strong> This is a screening tool, not a diagnostic device</li>
+                                <li><strong>High Accuracy:</strong> The system achieves high accuracy rates in detecting diabetic retinopathy</li>
+                                <li><strong>Professional Consultation:</strong> Always consult with an eye care professional for definitive diagnosis</li>
+                                <li><strong>Confidence Levels:</strong> Each result includes a confidence score to help interpret findings</li>
+                            </ul>
+                            <div class="alert alert-info">
+                                <strong>Important:</strong> This tool is designed to assist, not replace, professional medical evaluation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading3">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                What types of images should I upload for best results?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse3" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>For optimal results, please ensure your retinal images meet these criteria:</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-check-circle text-success"></i> Recommended:</h6>
+                                    <ul>
+                                        <li>High-resolution images (at least 1024x1024 pixels)</li>
+                                        <li>Well-lit, clear retinal photographs</li>
+                                        <li>Images taken by fundus camera or similar medical equipment</li>
+                                        <li>Properly centered on the optic disc and macula</li>
+                                        <li>JPG, JPEG, or PNG format</li>
+                                        <li>File size under 10MB</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-x-circle text-danger"></i> Avoid:</h6>
+                                    <ul>
+                                        <li>Blurry or out-of-focus images</li>
+                                        <li>Images with poor lighting</li>
+                                        <li>Screenshots or photos of screens</li>
+                                        <li>Images with excessive glare or reflections</li>
+                                        <li>Non-retinal eye images</li>
+                                        <li>Corrupted or damaged files</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading4">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                How do I interpret the results?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse4" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Our system provides detailed results with multiple classifications:</p>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Classification</th>
+                                            <th>Meaning</th>
+                                            <th>Action Required</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-success">
+                                            <td><strong>No DR</strong></td>
+                                            <td>No signs of diabetic retinopathy detected</td>
+                                            <td>Continue regular screening</td>
+                                        </tr>
+                                        <tr class="table-warning">
+                                            <td><strong>Mild DR</strong></td>
+                                            <td>Early signs of diabetic retinopathy</td>
+                                            <td>Consult eye specialist within 3-6 months</td>
+                                        </tr>
+                                        <tr class="table-warning">
+                                            <td><strong>Moderate DR</strong></td>
+                                            <td>Moderate diabetic retinopathy changes</td>
+                                            <td>Schedule appointment within 1-3 months</td>
+                                        </tr>
+                                        <tr class="table-danger">
+                                            <td><strong>Severe DR</strong></td>
+                                            <td>Advanced diabetic retinopathy</td>
+                                            <td>Urgent eye care consultation needed</td>
+                                        </tr>
+                                        <tr class="table-danger">
+                                            <td><strong>Proliferative DR</strong></td>
+                                            <td>Most advanced stage with new blood vessel growth</td>
+                                            <td>Immediate medical attention required</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>Confidence Scores:</strong> Higher confidence scores (>80%) indicate more reliable predictions. Lower scores may suggest the need for professional evaluation regardless of the classification.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading5">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                                Is my data secure and private?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse5" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>We take your privacy and data security very seriously:</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-shield-check text-success"></i> Security Measures:</h6>
+                                    <ul>
+                                        <li>All data is encrypted in transit and at rest</li>
+                                        <li>Secure user authentication system</li>
+                                        <li>Regular security audits and updates</li>
+                                        <li>Access logs and monitoring</li>
+                                        <li>HIPAA-compliant data handling</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-person-check text-primary"></i> Privacy Rights:</h6>
+                                    <ul>
+                                        <li>You own your data completely</li>
+                                        <li>Data is never shared without consent</li>
+                                        <li>You can delete your account and data anytime</li>
+                                        <li>Export your data in standard formats</li>
+                                        <li>Transparent privacy policy</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="alert alert-info">
+                                <strong>Data Usage:</strong> Your images are only used for analysis and improving our AI model (with your consent). We never use your data for commercial purposes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading6">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6">
+                                How often should I get screened?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse6" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Screening frequency depends on your risk factors and diabetes management:</p>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Diabetes Type</th>
+                                            <th>Recommended Screening</th>
+                                            <th>Special Considerations</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Type 1 Diabetes</strong></td>
+                                            <td>Every 1-2 years (starting 5 years after diagnosis)</td>
+                                            <td>More frequent if DR detected</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Type 2 Diabetes</strong></td>
+                                            <td>At diagnosis, then every 1-2 years</td>
+                                            <td>May need more frequent screening</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pregnancy</strong></td>
+                                            <td>Before conception and during pregnancy</td>
+                                            <td>Increased risk during pregnancy</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>High Risk</strong></td>
+                                            <td>Every 6-12 months</td>
+                                            <td>Poor diabetes control, hypertension</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading7">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7">
+                                What should I do if DR is detected?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse7" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>If our system detects signs of diabetic retinopathy, follow these steps:</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-exclamation-triangle text-warning"></i> Immediate Actions:</h6>
+                                    <ol>
+                                        <li><strong>Don't Panic:</strong> Early detection is good news</li>
+                                        <li><strong>Schedule Appointment:</strong> Contact an ophthalmologist</li>
+                                        <li><strong>Bring Results:</strong> Download and bring your report</li>
+                                        <li><strong>List Symptoms:</strong> Note any vision changes</li>
+                                    </ol>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-heart-pulse text-success"></i> Long-term Management:</h6>
+                                    <ol>
+                                        <li><strong>Blood Sugar Control:</strong> Maintain HbA1c < 7%</li>
+                                        <li><strong>Blood Pressure:</strong> Keep BP < 140/90 mmHg</li>
+                                        <li><strong>Regular Monitoring:</strong> Follow-up screenings</li>
+                                        <li><strong>Lifestyle Changes:</strong> Diet, exercise, smoking cessation</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="alert alert-success">
+                                <strong>Good News:</strong> With proper management, diabetic retinopathy progression can be slowed or stopped in most cases.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="heading8">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8">
+                                Technical issues and troubleshooting
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse8" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Common issues and solutions:</p>
+                            <div class="accordion" id="techAccordion">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#tech1">
+                                                Upload fails or takes too long
+                                            </button>
+                                        </h6>
+                                    </div>
+                                    <div id="tech1" class="collapse">
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Check your internet connection</li>
+                                                <li>Ensure image file is under 10MB</li>
+                                                <li>Try refreshing the page and uploading again</li>
+                                                <li>Clear your browser cache</li>
+                                                <li>Try a different browser</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#tech2">
+                                                Can't access my account
+                                            </button>
+                                        </h6>
+                                    </div>
+                                    <div id="tech2" class="collapse">
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Use the "Forgot Password" feature</li>
+                                                <li>Check your email for reset instructions</li>
+                                                <li>Ensure you're using the correct email</li>
+                                                <li>Contact support if issues persist</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#tech3">
+                                                Results seem incorrect
+                                            </button>
+                                        </h6>
+                                    </div>
+                                    <div id="tech3" class="collapse">
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Check the confidence score</li>
+                                                <li>Ensure image quality meets requirements</li>
+                                                <li>Try uploading a different image</li>
+                                                <li>Always consult with a professional for confirmation</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('main.how_to_use') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-question-circle"></i> How to Use Guide
+                        </a>
+                        <a href="{{ url_for('main.contact') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-envelope"></i> Contact Support
+                        </a>
+                        <a href="{{ url_for('main.about') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-info-square"></i> About Our System
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('main.upload_page') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-cloud-upload"></i> Upload Image
+                        </a>
+                        <a href="{{ url_for('main.history') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-clock-history"></i> View History
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-telephone"></i> Emergency Situations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <strong>Seek immediate medical attention if you experience:</strong>
+                        <ul class="mb-0">
+                            <li>Sudden vision loss</li>
+                            <li>Severe eye pain</li>
+                            <li>Flashing lights</li>
+                            <li>Curtain-like vision loss</li>
+                            <li>Sudden increase in floaters</li>
+                        </ul>
+                    </div>
+                    <p class="text-muted">
+                        <small>Call your eye doctor immediately or go to the emergency room.</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

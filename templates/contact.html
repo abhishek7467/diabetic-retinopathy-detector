@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="bi bi-envelope"></i> Contact Us</h2>
+            <p class="lead">We're here to help! Get in touch with our team for support, questions, or feedback.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Send us a Message</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="name" 
+                                       name="name" 
+                                       required
+                                       placeholder="Enter your full name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required
+                                       {% if current_user.is_authenticated %}
+                                       value="{{ current_user.email }}"
+                                       {% endif %}
+                                       placeholder="Enter your email address">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <select class="form-control" id="subject" name="subject" required>
+                                <option value="">Select a topic...</option>
+                                <option value="Technical Support">Technical Support</option>
+                                <option value="Account Issues">Account Issues</option>
+                                <option value="Results Question">Results Question</option>
+                                <option value="Feature Request">Feature Request</option>
+                                <option value="Bug Report">Bug Report</option>
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Medical Question">Medical Question</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" 
+                                      id="message" 
+                                      name="message" 
+                                      rows="6" 
+                                      required
+                                      placeholder="Please describe your question or concern in detail..."></textarea>
+                            <div class="form-text">
+                                Please provide as much detail as possible to help us assist you better.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                                <label class="form-check-label" for="privacy">
+                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a> 
+                                    and understand that my information will be used to respond to my inquiry. *
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Medical Disclaimer</h6>
+                            <p class="mb-0">
+                                <strong>Important:</strong> This contact form is not for medical emergencies. 
+                                If you're experiencing vision problems or eye emergencies, please contact 
+                                your healthcare provider immediately or go to the nearest emergency room.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Get Help Quickly</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6><i class="bi bi-question-circle"></i> Common Questions</h6>
+                        <p>Check our <a href="{{ url_for('main.faq') }}">FAQ section</a> for quick answers to common questions about using our system.</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="bi bi-book"></i> User Guide</h6>
+                        <p>Visit our <a href="{{ url_for('main.how_to_use') }}">How to Use guide</a> for step-by-step instructions.</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="bi bi-clock"></i> Response Time</h6>
+                        <p>We typically respond to inquiries within 24-48 hours during business days.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-telephone"></i> Alternative Contact Methods</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="bi bi-envelope"></i> Email Support</h6>
+                        <p class="mb-1"><strong>General Support:</strong></p>
+                        <p class="text-muted">support@drdetector.com</p>
+                        
+                        <p class="mb-1"><strong>Technical Issues:</strong></p>
+                        <p class="text-muted">tech@drdetector.com</p>
+                        
+                        <p class="mb-1"><strong>Medical Questions:</strong></p>
+                        <p class="text-muted">medical@drdetector.com</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6><i class="bi bi-clock"></i> Support Hours</h6>
+                        <p class="mb-0">
+                            <strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM (EST)<br>
+                            <strong>Saturday:</strong> 10:00 AM - 2:00 PM (EST)<br>
+                            <strong>Sunday:</strong> Closed
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Emergency Situations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h6><strong>Medical Emergency</strong></h6>
+                        <p class="mb-2">If you're experiencing:</p>
+                        <ul class="mb-2">
+                            <li>Sudden vision loss</li>
+                            <li>Severe eye pain</li>
+                            <li>Flashing lights or floaters</li>
+                            <li>Any urgent eye symptoms</li>
+                        </ul>
+                        <p class="mb-0">
+                            <strong>Do not use this contact form.</strong><br>
+                            Call your eye doctor immediately or go to the emergency room.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-square-dots"></i> Community & Resources</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people"></i> User Community Forum
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="bi bi-journal-medical"></i> Diabetes Resources
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="bi bi-eye"></i> Eye Health Tips
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="bi bi-newspaper"></i> Latest Research
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Information Collection</h6>
+                <p>When you contact us, we collect the information you provide including your name, email, and message content.</p>
+                
+                <h6>Information Use</h6>
+                <p>We use your contact information solely to respond to your inquiry and improve our services.</p>
+                
+                <h6>Information Sharing</h6>
+                <p>We do not share your personal information with third parties except as required by law.</p>
+                
+                <h6>Data Security</h6>
+                <p>We implement appropriate security measures to protect your personal information.</p>
+                
+                <h6>Data Retention</h6>
+                <p>We retain contact information only as long as necessary to respond to your inquiry and for customer service purposes.</p>
+                
+                <h6>Your Rights</h6>
+                <p>You have the right to request access to, correction of, or deletion of your personal information.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', function(e) {
+        // Show loading state
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
+        submitBtn.disabled = true;
+        
+        // Basic validation
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value.trim();
+        const privacy = document.getElementById('privacy').checked;
+        
+        if (!name || !email || !subject || !message || !privacy) {
+            e.preventDefault();
+            alert('Please fill in all required fields and accept the privacy policy.');
+            submitBtn.innerHTML = '<i class="bi bi-send"></i> Send Message';
+            submitBtn.disabled = false;
+            return false;
+        }
+        
+        if (!isValidEmail(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address.');
+            submitBtn.innerHTML = '<i class="bi bi-send"></i> Send Message';
+            submitBtn.disabled = false;
+            return false;
+        }
+    });
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    // Character counter for message
+    const messageTextarea = document.getElementById('message');
+    const maxLength = 1000;
+    
+    messageTextarea.addEventListener('input', function() {
+        const remaining = maxLength - this.value.length;
+        let counterElement = document.getElementById('messageCounter');
+        
+        if (!counterElement) {
+            counterElement = document.createElement('div');
+            counterElement.id = 'messageCounter';
+            counterElement.className = 'form-text';
+            messageTextarea.parentNode.appendChild(counterElement);
+        }
+        
+        counterElement.textContent = `${remaining} characters remaining`;
+        
+        if (remaining < 0) {
+            counterElement.className = 'form-text text-danger';
+            this.value = this.value.substring(0, maxLength);
+        } else if (remaining < 50) {
+            counterElement.className = 'form-text text-warning';
+        } else {
+            counterElement.className = 'form-text text-muted';
+        }
+    });
+});
+</script>
+{% endblock %}

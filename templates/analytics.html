@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}My Analytics - Diabetic Retinopathy Detector{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-graph-up"></i> My Analytics Dashboard</h2>
+                <div>
+                    <a href="{{ url_for('main.export_personal_data') }}" class="btn btn-outline-success">
+                        <i class="bi bi-download"></i> Export Data
+                    </a>
+                    <a href="{{ url_for('main.history') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> Back to History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">Total Tests</h5>
+                            <h3 class="mb-0">{{ stats.total_tests }}</h3>
+                        </div>
+                        <i class="bi bi-clipboard-data" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">Normal Results</h5>
+                            <h3 class="mb-0">{{ stats.normal_cases }}</h3>
+                        </div>
+                        <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">DR Detected</h5>
+                            <h3 class="mb-0">{{ stats.dr_cases }}</h3>
+                        </div>
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">Avg Confidence</h5>
+                            <h3 class="mb-0">{{ "%.1f"|format(stats.avg_confidence) }}%</h3>
+                        </div>
+                        <i class="bi bi-speedometer2" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Chart -->
+    {% if has_chart %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Test History Analysis</h5>
+                </div>
+                <div class="card-body text-center analytics-chart">
+                    <img src="{{ url_for('main.analytics_chart') }}" 
+                         alt="Analytics Chart" 
+                         class="img-fluid"
+                         style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Detailed Statistics -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-calendar-range"></i> Testing Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>First Test:</strong></td>
+                            <td>{{ stats.first_test_date.strftime('%B %d, %Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Latest Test:</strong></td>
+                            <td>{{ stats.last_test_date.strftime('%B %d, %Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Testing Period:</strong></td>
+                            <td>{{ (stats.last_test_date - stats.first_test_date).days }} days</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recent Trend:</strong></td>
+                            <td>
+                                {% if stats.trend == 'improving' %}
+                                    <span class="badge bg-success">Improving</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Stable</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Detection Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Normal (No DR)</span>
+                            <span>{{ stats.normal_cases }}/{{ stats.total_tests }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ (stats.normal_cases / stats.total_tests * 100) if stats.total_tests > 0 else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>DR Detected</span>
+                            <span>{{ stats.dr_cases }}/{{ stats.total_tests }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" 
+                                 style="width: {{ (stats.dr_cases / stats.total_tests * 100) if stats.total_tests > 0 else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Detection Rate: {{ "%.1f"|format((stats.dr_cases / stats.total_tests * 100) if stats.total_tests > 0 else 0) }}%
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Personalized Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.dr_cases > 0 %}
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Health Alert</h6>
+                            <p class="mb-2">You have {{ stats.dr_cases }} test(s) showing signs of diabetic retinopathy. 
+                               This requires attention from a healthcare professional.</p>
+                            <strong>Recommendations:</strong>
+                            <ul class="mt-2 mb-0">
+                                <li>Schedule an appointment with an ophthalmologist</li>
+                                <li>Continue regular eye screenings</li>
+                                <li>Monitor blood sugar levels closely</li>
+                                <li>Follow your diabetes management plan</li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-check-circle"></i> Good News!</h6>
+                            <p class="mb-2">All your tests show no signs of diabetic retinopathy. Keep up the good work!</p>
+                            <strong>Continue to:</strong>
+                            <ul class="mt-2 mb-0">
+                                <li>Maintain regular eye screenings</li>
+                                <li>Keep blood sugar levels under control</li>
+                                <li>Follow a healthy lifestyle</li>
+                                <li>Stay consistent with your diabetes management</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add any JavaScript for analytics page
+    console.log('Analytics page loaded');
+});
+</script>
+{% endblock %}
