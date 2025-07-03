@@ -43,7 +43,7 @@ diabetic-retinopathy-detector
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/abhishek7467/diabetic-retinopathy-detector.git
    cd diabetic-retinopathy-detector
    ```
 
@@ -58,11 +58,14 @@ diabetic-retinopathy-detector
    pip install -r requirements.txt
    ```
 
-4. Set up the database and any necessary configurations in `config.py`.
+4.Download Yolo Model
+   download yolo model from the kaggle by using like https://www.kaggle.com/models/abhishekcorporate/diabetic-retina-classifier
+   
+5. Set up the database and any necessary configurations in `config.py`.
    Change the Yolo model path in config.py file like     YOLOV8_MODEL_PATH = '/media/abhisekhkumar/532f0f5d-32d6-4a7c-9464-0aa27dbfb9b8/Tutorials/retinopatia_project/RD_project/diabetic-retinopathy-detector/yolo_model/best.pt'    
 
 
-5. Configure OTP settings for email and SMS functionality:
+6. Configure OTP settings for email and SMS functionality:
    ```
    # Email settings in config.py
    MAIL_SERVER = 'smtp.gmail.com'  # Or your preferred SMTP server
