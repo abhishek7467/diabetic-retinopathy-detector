@@ -9,5 +9,5 @@ app = create_app()
 
 if __name__ == '__main__':
     print("Starting Diabetic Retinopathy Detector application...")
-    app.run(debug=True, port=9090)
+    app.run(debug=True, port=9590)
     print("Application stopped.")
