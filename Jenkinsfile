@@ -31,7 +31,7 @@ pipeline {
                 echo 'Running Flask app...'
                 sh '''
                     source $VENV_DIR/bin/activate
-                    nohup gunicorn -b 0.0.0.0:5000 app:app &
+                    nohup python3 run.py &
                 '''
             }
         }
