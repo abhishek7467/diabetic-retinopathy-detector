@@ -56,7 +56,6 @@ phonenumbers==8.13.26
 Pillow==10.0.1
 propcache==0.3.2
 psutil==7.0.0
-py-cpuinfo==9.0.0num
 PyJWT==2.8.0
 pyparsing==3.0.9
 pypng==0.20220715.0
