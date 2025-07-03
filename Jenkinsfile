@@ -28,7 +28,7 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 nohup python run.py > app.log 2>&1 &
                 '''
             }
