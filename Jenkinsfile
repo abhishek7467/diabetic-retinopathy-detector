@@ -2,13 +2,15 @@ pipeline {
     agent any
 
     triggers {
-        githubPush() // this enables webhook trigger
+        githubPush() // webhook-based trigger
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/abhishek7467/diabetic-retinopathy-detector.git'
+                git branch: 'main',
+                    credentialsId: '4041c808-ea64-46ed-bd5f-7f5f8109efb5',
+                    url: 'https://github.com/abhishek7467/diabetic-retinopathy-detector.git'
             }
         }
 
@@ -17,6 +19,7 @@ pipeline {
                 sh '''
                 python3 -m venv venv
                 source venv/bin/activate
+                pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
             }
@@ -26,7 +29,7 @@ pipeline {
             steps {
                 sh '''
                 source venv/bin/activate
-                nohup python run.py &
+                nohup python run.py > app.log 2>&1 &
                 '''
             }
         }
